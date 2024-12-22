@@ -158,6 +158,8 @@ async function handleDelete(request: Request, env: Env, userId: string, fileHash
         return jsonError('Not Found', 404)
     }
 
+    await remove_access(env, userId, fileHash)
+
     if (!await has_members(env, fileHash)) {
         const s3Date = new Date().toUTCString()
         const signatureString = `DELETE\n\n\n${s3Date}\n/plural-images/${fileHash}`
@@ -178,8 +180,6 @@ async function handleDelete(request: Request, env: Env, userId: string, fileHash
         if (!s3Response.ok) {
             return jsonError('Failed to delete image', 500)
         }
-    } else {
-        await remove_access(env, userId, fileHash)
     }
 
     const cacheKey = new Request(request.url)
