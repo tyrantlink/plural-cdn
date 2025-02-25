@@ -18,6 +18,8 @@ export default {
         switch (request.method) {
             case 'GET':
                 return handleGet(request, env, ctx, userId, fileHash)
+            case 'HEAD':
+                return handleHead(request, env, ctx, userId, fileHash)
             case 'PUT':
                 return handlePut(request, env, userId, fileHash)
             case 'DELETE':
@@ -73,6 +75,15 @@ async function handleGet(request: Request, env: Env, ctx: ExecutionContext, user
 
     ctx.waitUntil(cache.put(cacheKey, response.clone()))
     return response
+}
+
+async function handleHead(request: Request, env: Env, ctx: ExecutionContext, userId: string, fileHash: string) {
+    // ? yes this grabs the entire body, but this is going to be completely replaced in v3 so i don't care
+    const response = await handleGet(request, env, ctx, userId, fileHash)
+    return new Response(null, {
+        status: response.status,
+        headers: response.headers
+    })
 }
 
 async function handlePut(request: Request, env: Env, userId: string, fileHash: string) {
