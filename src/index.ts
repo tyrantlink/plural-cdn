@@ -69,6 +69,7 @@ async function handleGet(request: Request, env: Env, ctx: ExecutionContext, user
         headers: {
             'Cache-Control': 'public, max-age=31536000',
             'Content-Type': s3Response.headers.get('Content-Type') || 'image/webp',
+            'Content-Length': s3Response.headers.get('Content-Length') || '0',
             'Access-Control-Allow-Origin': '*'
         }
     })
